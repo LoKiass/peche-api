@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Service\Database;
+use App\Service\FishService;
 use PDOException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -10,22 +10,29 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class DefaultController extends AbstractController
 {
+
+    public function __construct(private FishService $fishService) {}
+    
+
     #[Route('/default', name: 'app_default')]
     public function index(): JsonResponse
     {
         try {
-            $db = new Database();
-            $result = $db->getConnection()->query('SELECT * FROM fish')->fetch();
+            $id = 1; // Example fish ID
+            $fish = $this->fishService->getFishById($id);
 
-            return $this->json([
-                'connected' => true,
-                'result' => $result,
-            ]);
+            if ($fish) {
+                return new JsonResponse([
+                    'id' => $fish->getId(),
+                    'name' => $fish->getName(),
+                    'species' => $fish->getSpecies(),
+                ]);
+            }
+            else {
+                return new JsonResponse(['error' => 'Fish not found'], 404);
+            }
         } catch (PDOException $e) {
-            return $this->json([
-                'connected' => false,
-                'error' => $e->getMessage(),
-            ], 500);
+            return new JsonResponse(['error' => 'Database connection failed: ' . $e->getMessage()], 500);
         }
     }
 }
