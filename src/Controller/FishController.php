@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Model\Fish;
 use \App\Service\FishService;
+use MessageFormatter;
 use PDOException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -75,6 +76,29 @@ final class FishController extends AbstractController
         } catch(PDOException $e){
             return new JsonResponse([
                 "error" => "Database connection failed ",
+                "message" => $e
+            ]);
+        }
+    }
+
+    #[Route('fish/delete/{id}', name:'api-fish-delete', methods:'DELETE', requirements:['id' => '\d+'])]
+    public function deleteFish(int $id) : JsonResponse {
+        try{
+            $result = $this->FishService->deleteFish($id);
+
+            if($result){
+                return new JsonResponse([
+                    "message" => "Le poissons à bien été suprrimer"
+                ]);
+            } else {
+                return new JsonResponse([
+                    "message" => "Le poissons n'a pas ete supprimer"
+                ]);
+            }
+
+        }catch(PDOException $e){
+            return new JsonResponse([
+                "error" => "Database connection failed",
                 "message" => $e
             ]);
         }

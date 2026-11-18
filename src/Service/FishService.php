@@ -10,6 +10,7 @@ class FishService {
 
     public function __construct(private Database $database) {}
 
+    // Permet de recuper un poissons via un ID
     public function getFishById(int $id): ?Fish {
         $pdo = $this->database->getConnection();
         $stmt = $pdo->prepare("SELECT * FROM fish WHERE id_fish = ?");
@@ -22,6 +23,7 @@ class FishService {
         return null;
     }
 
+    // Permet de recuperer touts les poissons de la DB
     public function getAllFish(){
         $pdo = $this->database->getConnection();
         $stmt = $pdo->prepare("SELECT * FROM fish");
@@ -39,6 +41,7 @@ class FishService {
     
     }
 
+    // Permet la créations d'un poissons 
     public function createFish(Fish $fish) : bool{
         $pdo = $this->database->getConnection();
         $stmt = $pdo->prepare("INSERT INTO fish (nom, taille) VALUES (?, ?)");
@@ -48,5 +51,17 @@ class FishService {
             return true;
         }
         else return false;
+    }
+
+    public function deleteFish(int $id) : bool {
+        $pdo = $this->database->getConnection();
+        $stmt = $pdo->prepare("DELETE FROM fish where id_fish = ?");
+        $result = $stmt->execute([$id]);
+
+        if ($result){
+            return true;
+        } else {
+            return false;
+        }
     }
 }
