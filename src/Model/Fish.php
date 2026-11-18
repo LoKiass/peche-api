@@ -4,12 +4,12 @@ namespace App\Model;
 class Fish {
     private int $id;
     private string $name;
-    private string $species;
+    private int $taille;
 
-    public function __construct(int $id, string $name, string $species) {
+    public function __construct(int $id, string $name, int $taille) {
         $this->id = $id;
         $this->name = $name;
-        $this->species = $species;
+        $this->taille = $taille;
     }
 
     public function getId(): int {
@@ -20,8 +20,8 @@ class Fish {
         return $this->name;
     }
 
-    public function getSpecies(): string {
-        return $this->species;
+    public function getTaille(): string {
+        return $this->taille;
     }
 
 }
